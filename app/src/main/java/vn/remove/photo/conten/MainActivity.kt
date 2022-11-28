@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(main.root)
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         getId().observe(this) {
-            boatView.liveDataFromDb(application, it).observe(this) { live ->
+            boatView.firedataLive(application, it).observe(this) { live ->
                 if (checkAdb(application)) {
                     data = live
                     webWork(savedInstanceState, it)
@@ -56,11 +56,11 @@ class MainActivity : AppCompatActivity() {
 //                    go()
                 }
             }
-            if (!prefs.getBoolean("firstTime", false)) {
-                boatView.dataAcquisition(this, it)
+            if (!prefs.getBoolean("end", false)) {
+                boatView.buildingLinkGetter(this, it)
                 val editor = prefs.edit()
-                editor.putBoolean("firstTime", true)
-                editor.commit()
+                editor.putBoolean("end", true)
+                editor.apply()
             }
         }
     }
@@ -179,18 +179,15 @@ class MainActivity : AppCompatActivity() {
                 CookieManager.getInstance().flush()
                 when (sharedPreferences.getString(CHECK, "")) {
                     CHECKED -> {
-                        boatView.saveUrl(url = url.toString(), id = id, application = application)
+                        boatView.setBoat(linkUrl = url.toString(), gog = id, app = application)
                         Log.d("olympusViewModel_save_1", url.toString())
 
                         editor.putString(CHECK, "false")
                         editor.commit()
                     }
                     "" -> {
-                        boatView.saveUrl(url = url.toString(), id = id, application = application)
+                        boatView.setBoat(linkUrl = url.toString(), gog = id, app = application)
                         Log.d("olympusViewModel_save_2", url.toString())
-
-                        editor.putString(CHECK, "false")
-                        editor.commit()
                         editor.putString(CHECK, CHECKED)
                         editor.commit()
                     }
@@ -273,7 +270,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun checkAdb(context: Context): Boolean {
+    private fun checkAdb(context: Context): Boolean {
         return Settings.Global.getString(
             context.contentResolver,
             Settings.Global.ADB_ENABLED
@@ -282,7 +279,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val CHECK = "check"
         private const val CHECKED = "checked"
-        private const val BASE_URL = "https://wolfdark.online/"
+        private const val BASE_URL = "https://bonanzaboat.store/"
         private const val ERROR_TX = "Error"
         private const val NAME_SHARED = "prefses"
     }

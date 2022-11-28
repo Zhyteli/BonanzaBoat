@@ -11,14 +11,14 @@ import vn.remove.photo.logics.BoatModelFirebase
 import vn.remove.photo.logics.BoatModelRoom
 
 class BoatLogicsIm(
-    application: Application,
-    val gadid: String
+    app: Application,
+    val gog: String
 ) : BoatLogics {
 
     private lateinit var firebase: DatabaseReference
     private lateinit var valueLoop: ValueEventListener
     private var firebaseData: BoatModelFirebase? = null
-    val roomDao = RoomOneData.getInstance(application).roomDao()
+    val roomDao = RoomOneData.getInstance(app).roomDao()
 
     override fun getBoatModelRoomData(): LiveData<BoatModelRoom> {
         return roomDao.boatLiveData()
@@ -37,7 +37,7 @@ class BoatLogicsIm(
     }
 
     override fun getBoatModelFireData(): LiveData<BoatModelFirebase> {
-        firebase = FirebaseDatabase.getInstance().getReference(gadid)
+        firebase = FirebaseDatabase.getInstance().getReference(gog)
 
         val boatModelFirebaseMutableLiveData: MutableLiveData<BoatModelFirebase> = MutableLiveData()
 
@@ -57,9 +57,9 @@ class BoatLogicsIm(
     }
 
     override fun setterBoatModelFireData(data: BoatModelFirebase) {
-        firebase = FirebaseDatabase.getInstance().getReference(gadid)
-        data.id = gadid
-        firebase.child(gadid).setValue(data)
+        firebase = FirebaseDatabase.getInstance().getReference(gog)
+        data.id = gog
+        firebase.child(gog).setValue(data)
     }
     companion object {
         const val DEFAULT_STRING = "bonanzaboat.store/boat.php"
