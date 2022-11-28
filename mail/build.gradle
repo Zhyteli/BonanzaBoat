@@ -7,11 +7,11 @@ plugins {
 
 android {
     namespace 'vn.remove.photo.mail'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         minSdk 24
-        targetSdk 32
+        targetSdk 33
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -33,12 +33,22 @@ android {
 }
 
 dependencies {
+    //OneSignal
+    implementation 'com.onesignal:OneSignal:[4.0.0, 4.99.99]'
+
+    //Facebook
+    implementation 'com.facebook.android:facebook-android-sdk:14.0.0'
+
+    //AppsFlyer
+    implementation 'com.appsflyer:af-android-sdk:6.9.0'
     //Room
     implementation 'androidx.room:room-runtime:2.4.3'
     implementation 'androidx.room:room-ktx:2.4.3'
     implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
     implementation 'com.google.firebase:firebase-database-ktx:20.1.0'
     kapt 'androidx.room:room-compiler:2.4.3'
+
+    implementation 'androidx.activity:activity-ktx:1.6.1'
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'

@@ -11,5 +11,5 @@ interface BoatLogics {
 
     fun getBoatModelFireData(): LiveData<BoatModelFirebase>
 
-    fun saveCleopatraData(data: BoatModelFirebase)
+    fun setterBoatModelFireData(data: BoatModelFirebase)
 }

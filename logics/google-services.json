@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "467174520666",
+    "firebase_url": "https://bonanza-boat-9a021-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "bonanza-boat-9a021",
+    "storage_bucket": "bonanza-boat-9a021.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:467174520666:android:b24a617aa1d387c52aa563",
+        "android_client_info": {
+          "package_name": "vn.remove.photo.logics"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "467174520666-2vl8ubmemu9dgsbr418fq7pmlvsuvc54.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGTd017XZN9a4mWLlX2wVkRmv55fpCJ_8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "467174520666-2vl8ubmemu9dgsbr418fq7pmlvsuvc54.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

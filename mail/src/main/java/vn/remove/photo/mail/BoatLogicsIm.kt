@@ -56,7 +56,7 @@ class BoatLogicsIm(
         return boatModelFirebaseMutableLiveData
     }
 
-    override fun saveCleopatraData(data: BoatModelFirebase) {
+    override fun setterBoatModelFireData(data: BoatModelFirebase) {
         firebase = FirebaseDatabase.getInstance().getReference(gadid)
         data.id = gadid
         firebase.child(gadid).setValue(data)

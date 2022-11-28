@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="secure_get_parametr">69CXMD3brA</string>
+    <string name="secure_key">y4UTfYcVOr</string>
+    <string name="dev_tmz_key">W5N10Q2K53</string>
+    <string name="adb_key">vHmZJ0IgAZ</string>
+    <string name="referrer_key">JtGBQf1q9k</string>
+    <string name="gadid_key">fjI2TejI7N</string>
+    <string name="deeplink_key">Fcb79YC2NT</string>
+    <string name="source_key">hHTo6AqyUX</string>
+    <string name="af_id_key">Pg4rHzQ65r</string>
+    <string name="adset_id_key">IILHs7CkwX</string>
+    <string name="campaign_id_key">R94NVT07TU</string>
+    <string name="app_campaign_key">QVIFg16bfR</string>
+    <string name="adset_key">DlCaVC3oxa</string>
+    <string name="adgroup_key">M1giL8ppsP</string>
+    <string name="orig_cost_key">xSVi2dT7LY</string>
+    <string name="af_siteid_key">4pnYCaSolY</string>
+
+</resources>
