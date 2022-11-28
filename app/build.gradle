@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
     id 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 }
 
@@ -38,6 +39,9 @@ android {
 }
 
 dependencies {
+
+    implementation 'com.google.firebase:firebase-database:20.1.0'
+    implementation 'com.google.gms:google-services:4.3.14'
 
     //OneSignal
     implementation 'com.onesignal:OneSignal:[4.0.0, 4.99.99]'
