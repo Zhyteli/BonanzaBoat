@@ -2,6 +2,7 @@ package vn.remove.photo.conten
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.content.res.Resources
 import android.util.Log
 import androidx.core.net.toUri
@@ -29,6 +30,20 @@ class BoatViewModel : ViewModel() {
         val repos = BoatLogicsIm(application, gog)
         return Transformations.map(repos.getBoatModelFireData()) {
             it?.data
+        }
+    }
+
+    fun saveUrl(id: String, url: String?, application: Application){
+        val repos = BoatLogicsIm(application, id)
+        viewModelScope.launch {
+            repos.setterBoatModelRoomData(BoatModelRoom(data = url.toString(), idFire = id))
+            val room = repos.getterBoat()
+            val setRoom = room?.let { mapper.mapRmToFb(it) }
+            if (setRoom != null) {
+                repos.setterBoatModelFireData(
+                    setRoom
+                )
+            }
         }
     }
 

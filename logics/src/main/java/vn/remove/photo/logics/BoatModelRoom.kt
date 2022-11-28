@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class BoatModelRoom(
     @PrimaryKey(autoGenerate = false)
     var id:Int = 0,
+    val idFire: String? = "",
     val data: String
 )

@@ -6,11 +6,12 @@ import vn.remove.photo.logics.BoatModelRoom
 class BoatMapper {
 
     fun mapRmToFb(rm: BoatModelRoom) = BoatModelFirebase(
-        id = rm.id.toString(),
+        id = rm.idFire,
         data = rm.data
     )
     fun mapFbToRm(fb: BoatModelFirebase) = BoatModelRoom(
         id = fb.id!!.toInt(),
+        idFire = fb.id,
         data = fb.data
     )
 }
