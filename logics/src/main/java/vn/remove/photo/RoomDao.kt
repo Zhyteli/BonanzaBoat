@@ -9,10 +9,10 @@ import vn.remove.photo.logics.BoatModelRoom
 
 @Dao
 interface RoomDao {
-    @Query("SELECT * FROM dataone LIMIT 1")
+    @Query("SELECT * FROM fire LIMIT 1")
     fun getter(): BoatModelRoom?
 
-    @Query("SELECT * FROM dataone")
+    @Query("SELECT * FROM fire")
     fun boatLiveData(): LiveData<BoatModelRoom>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
