@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/mod"
+    tools:context=".ImageActivity">
+
+    <ImageView
+        android:id="@+id/dag"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="20dp"
+        android:src="@drawable/dage"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/welo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/welo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/gou"
+        app:layout_constraintStart_toEndOf="@+id/dag"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/gou"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/gou"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/clous"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="#DCF0F9"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="horizontal" />
+
+    <Button
+        android:id="@+id/whe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:text="Where?"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/welo" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
