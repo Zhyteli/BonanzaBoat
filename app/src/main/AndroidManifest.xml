@@ -13,16 +13,23 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        tools:replace="android:fullBackupContent"
         android:theme="@style/Theme.BonanzaBoat"
         android:usesCleartextTraffic="true"
+        tools:replace="android:fullBackupContent"
         tools:targetApi="31">
+        <activity
+            android:name=".ImageActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".BoatWebActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:windowSoftInputMode="adjustResize"
+            android:exported="true"
             android:usesCleartextTraffic="true"
-            android:exported="true">
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,6 +40,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/one" />
