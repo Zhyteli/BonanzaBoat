@@ -1,6 +1,12 @@
 package vn.remove.photo.logics
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "dataone")
 data class BoatModelRoom(
-    val id:Int = 0,
+    @PrimaryKey(autoGenerate = false)
+    var id:Int = 0,
+    val idFire: String? = "",
     val data: String
 )
