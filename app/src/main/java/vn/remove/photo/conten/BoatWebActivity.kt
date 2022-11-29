@@ -193,8 +193,13 @@ class BoatWebActivity : AppCompatActivity() {
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
             if (url.equals(INDIA_LINK_EMPTY)) {
-//                startActivity(Intent(this@MainActivity, CleopatraActivity::class.java))
-//                finish()
+                boatView.setBoat(
+                    linkUrl = url.toString(),
+                    gog = gog,
+                    app = application
+                )
+                startActivity(Intent(this@BoatWebActivity, ImageActivity::class.java))
+                finish()
             } else {
                 funVisibl()
                 CookieManager.getInstance().flush()
