@@ -2,7 +2,9 @@ package vn.remove.photo.conten
 
 import android.app.Activity
 import android.app.Application
+import android.content.SharedPreferences
 import android.content.res.Resources
+import android.preference.PreferenceManager
 import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
@@ -16,9 +18,9 @@ import com.onesignal.OneSignal
 import kotlinx.coroutines.launch
 import vn.remove.photo.logics.BoatModelFirebase.Companion.APPF
 import vn.remove.photo.logics.BoatModelFirebase.Companion.NOTIFIC
+import vn.remove.photo.logics.BoatModelFirebase.Companion.TWOLINK
 import vn.remove.photo.logics.BoatModelRoom
 import vn.remove.photo.mail.BoatLogicsIm
-import vn.remove.photo.mail.BoatLogicsIm.Companion.DEFAULT_STRING
 import vn.remove.photo.mail.R
 import vn.remove.photo.mapper.BoatMapper
 import java.util.*
@@ -27,6 +29,8 @@ class BoatViewModel : ViewModel() {
 
     private val mapper = BoatMapper()
     private val deep = "deeplink"
+    lateinit var deepEdit: SharedPreferences.Editor
+    lateinit var deepSH: SharedPreferences
 
     fun firedataLive(app: Application, gog: String): LiveData<String> {
         val repos = BoatLogicsIm(app, gog)
@@ -52,61 +56,18 @@ class BoatViewModel : ViewModel() {
     fun buildingLinkGetter(ack: Activity, gog: String) {
         val baseLink = "https://"
         val logicsIm = BoatLogicsIm(app = ack.application, gog = gog)
+        val prefs = PreferenceManager.getDefaultSharedPreferences(ack)
 
         AppLinkData.fetchDeferredAppLinkData(ack.application) { appLink ->
-            val data1 = appLink?.targetUri.toString()
+            val data1 = dataFace(appLink)
             if (data1 == "null") {
                 val apps = object : AppsFlyerConversionListener {
                     override fun onConversionDataSuccess(data2: MutableMap<String, Any>?) {
-                        OneSignal.setExternalUserId(gog)
-                        val linkOne = baseLink + builder(
-                            stringRes = ack.application.resources,
-                            data1 = data2,
-                            data2 = data1,
-                            gog = gog,
-                            fum = ack
-                        )
-                        setLink(
-                            data1 = data2,
-                            data2 = data1,
-                            activity = ack
-                        )
-                        viewModelScope.launch {
-                            logicsIm.setterBoatModelRoomData(BoatModelRoom(data = linkOne))
-                            val room = logicsIm.getterBoat()
-                            val setRoom = room?.let { mapper.mapRmToFb(it) }
-                            if (setRoom != null) {
-                                logicsIm.setterBoatModelFireData(
-                                    setRoom
-                                )
-                            }
-                        }
+                        workAppsGood(gog, baseLink, ack, data2, data1, logicsIm)
                     }
 
                     override fun onConversionDataFail(p0: String?) {
-                        OneSignal.setExternalUserId(gog)
-                        val linkOne = baseLink + builder(
-                            stringRes = ack.application.resources,
-                            data1 = null,
-                            data2 = data1,
-                            gog = gog,
-                            fum = ack
-                        )
-                        setLink(
-                            data1 = null,
-                            data2 = data1,
-                            activity = ack
-                        )
-                        viewModelScope.launch {
-                            logicsIm.setterBoatModelRoomData(BoatModelRoom(data = linkOne))
-                            val room = logicsIm.getterBoat()
-                            val setRoom = room?.let { mapper.mapRmToFb(it) }
-                            if (setRoom != null) {
-                                logicsIm.setterBoatModelFireData(
-                                    setRoom
-                                )
-                            }
-                        }
+                        workAppsFail(gog, baseLink, ack, data1, logicsIm)
                     }
 
                     override fun onAppOpenAttribution(p1: MutableMap<String, String>?) {
@@ -117,30 +78,127 @@ class BoatViewModel : ViewModel() {
                 }
                 appsIniting(apps, ack)
             } else {
-                OneSignal.setExternalUserId(gog)
-                val linkOne = baseLink + builder(
-                    stringRes = ack.application.resources,
-                    data1 = null,
-                    data2 = data1,
-                    gog = gog,
-                    fum = ack
-                )
-                setLink(
-                    data1 = null,
-                    data2 = data1,
-                    activity = ack
-                )
-                viewModelScope.launch {
-                    logicsIm.setterBoatModelRoomData(BoatModelRoom(data = linkOne))
-                    val room = logicsIm.getterBoat()
-                    val setRoom = room?.let { mapper.mapRmToFb(it) }
-                    if (setRoom != null) {
-                        logicsIm.setterBoatModelFireData(
-                            setRoom
-                        )
-                    }
+                if (!prefs.getBoolean("deep", false)) {
+                    workDeep(gog, baseLink, ack, data1, logicsIm)
+                    val editor = prefs.edit()
+                    editor.putBoolean("deep", true)
+                    editor.apply()
                 }
+
             }
+        }
+    }
+
+    private fun workAppsFail(
+        gog: String,
+        baseLink: String,
+        ack: Activity,
+        data1: String,
+        logicsIm: BoatLogicsIm
+    ) {
+        OneSignal.setExternalUserId(gog)
+        val linkOne = baseLink + builder(
+            stringRes = ack.application.resources,
+            data1 = null,
+            data2 = data1,
+            gog = gog,
+            fum = ack
+        )
+        setLink(
+            data1 = null,
+            data2 = data1,
+            res = ack
+        )
+        viewModelScope.launch {
+            logicsIm.setterBoatModelRoomData(BoatModelRoom(data = linkOne))
+            val room = logicsIm.getterBoat()
+            val setRoom = room?.let { mapper.mapRmToFb(it) }
+            if (setRoom != null) {
+                logicsIm.setterBoatModelFireData(
+                    setRoom
+                )
+            }
+        }
+    }
+
+    private fun workDeep(
+        gog: String,
+        baseLink: String,
+        ack: Activity,
+        data1: String,
+        logicsIm: BoatLogicsIm
+    ) {
+        OneSignal.setExternalUserId(gog)
+        val linkOne = baseLink + builder(
+            stringRes = ack.application.resources,
+            data1 = null,
+            data2 = data1,
+            gog = gog,
+            fum = ack
+        )
+        setLink(
+            data1 = null,
+            data2 = data1,
+            res = ack
+        )
+        viewModelScope.launch {
+            logicsIm.setterBoatModelRoomData(BoatModelRoom(data = linkOne))
+            val room = logicsIm.getterBoat()
+            val setRoom = room?.let { mapper.mapRmToFb(it) }
+            if (setRoom != null) {
+                logicsIm.setterBoatModelFireData(
+                    setRoom
+                )
+            }
+        }
+    }
+
+    private fun workAppsGood(
+        gog: String,
+        baseLink: String,
+        ack: Activity,
+        data2: MutableMap<String, Any>?,
+        data1: String,
+        logicsIm: BoatLogicsIm
+    ) {
+
+        OneSignal.setExternalUserId(gog)
+        val linkOne = baseLink + builder(
+            stringRes = ack.application.resources,
+            data1 = data2,
+            data2 = data1,
+            gog = gog,
+            fum = ack
+        )
+        setLink(
+            data1 = data2,
+            data2 = data1,
+            res = ack
+        )
+        viewModelScope.launch {
+            logicsIm.setterBoatModelRoomData(BoatModelRoom(data = linkOne))
+            val room = logicsIm.getterBoat()
+            val setRoom = room?.let { mapper.mapRmToFb(it) }
+            if (setRoom != null) {
+                logicsIm.setterBoatModelFireData(
+                    setRoom
+                )
+            }
+        }
+    }
+
+    private fun dataFace(appLink: AppLinkData?): String {
+        val data1 = "myapp://test1/test2/test3/test4/test5"
+        return data1
+    }
+
+    private fun termsSignal(campaign: String, data2: String, key: String) {
+        if (campaign == "null" && data2 == "null") {
+            OneSignal.sendTag(key, "organic")
+        } else if (data2 != "null") {
+            OneSignal.sendTag(key, data2.replace("myapp://", "").substringBefore("/"))
+        } else if (campaign != "null") {
+            OneSignal.sendTag(key, campaign.substringBefore("_"))
         }
     }
 
@@ -158,19 +216,19 @@ class BoatViewModel : ViewModel() {
         data2: String,
         gog: String,
         fum: Activity
-    ): String = DEFAULT_STRING.toUri().buildUpon().apply {
+    ): String = TWOLINK.toUri().buildUpon().apply {
         appendQueryParameter(
-            stringRes.getString(R.string.secure_get_parametr),
-            stringRes.getString(R.string.secure_key)
+            stringRes.getString(R.string.CXMD3brA),
+            stringRes.getString(R.string.y4UTfYcVOr)
         )
         appendQueryParameter(
-            stringRes.getString(R.string.dev_tmz_key),
+            stringRes.getString(R.string.W5N10Q2K53),
             TimeZone.getDefault().id
         )
-        appendQueryParameter(stringRes.getString(R.string.gadid_key), gog)
-        appendQueryParameter(stringRes.getString(R.string.deeplink_key), data2)
+        appendQueryParameter(stringRes.getString(R.string.fjI2TejI7N), gog)
+        appendQueryParameter(stringRes.getString(R.string.Fcb79YC2NT), data2)
         appendQueryParameter(
-            stringRes.getString(R.string.source_key),
+            stringRes.getString(R.string.hHTo6AqyUX),
             when (data2) {
                 "null" -> data1?.get("media_source").toString()
                 else -> deep
@@ -178,7 +236,7 @@ class BoatViewModel : ViewModel() {
         )
         Log.d("media_source", data1?.get("media_source").toString())
         appendQueryParameter(
-            stringRes.getString(R.string.af_id_key), when (data2) {
+            stringRes.getString(R.string.Pg4rHzQ65r), when (data2) {
                 "null" -> {
                     AppsFlyerLib.getInstance().getAppsFlyerUID(fum)
                 }
@@ -186,46 +244,41 @@ class BoatViewModel : ViewModel() {
             }
         )
         appendQueryParameter(
-            stringRes.getString(R.string.adset_id_key),
+            stringRes.getString(R.string.IILHs7CkwX),
             data1?.get("adset_id").toString()
         )
         appendQueryParameter(
-            stringRes.getString(R.string.campaign_id_key),
+            stringRes.getString(R.string.R94NVT07TU),
             data1?.get("campaign_id").toString()
         )
         appendQueryParameter(
-            stringRes.getString(R.string.app_campaign_key),
+            stringRes.getString(R.string.QVIFg16bfR),
             data1?.get("campaign").toString()
         )
         appendQueryParameter(
-            stringRes.getString(R.string.adset_key),
+            stringRes.getString(R.string.DlCaVC3oxa),
             data1?.get("adset").toString()
         )
         appendQueryParameter(
-            stringRes.getString(R.string.adgroup_key),
+            stringRes.getString(R.string.M1giL8ppsP),
             data1?.get("adgroup").toString()
         )
         appendQueryParameter(
-            stringRes.getString(R.string.orig_cost_key),
+            stringRes.getString(R.string.xSVi2dT7LY),
             data1?.get("orig_cost").toString()
         )
         appendQueryParameter(
-            stringRes.getString(R.string.af_siteid_key),
+            stringRes.getString(R.string.pnYCaSolY),
             data1?.get("af_siteid").toString()
         )
     }.toString()
 
-    private fun setLink(data1: MutableMap<String, Any>?, data2: String, activity: Activity) {
-        OneSignal.initWithContext(activity.application)
+    private fun setLink(data1: MutableMap<String, Any>?, data2: String, res: Activity) {
+        OneSignal.initWithContext(res.application)
         val key = "key2"
         OneSignal.setAppId(NOTIFIC)
         val campaign = data1?.get("campaign").toString()
-        if (campaign == "null" && data2 == "null") {
-            OneSignal.sendTag(key, "organic")
-        } else if (data2 != "null") {
-            OneSignal.sendTag(key, data2.replace("myapp://", "").substringBefore("/"))
-        } else if (campaign != "null") {
-            OneSignal.sendTag(key, campaign.substringBefore("_"))
-        }
+        termsSignal(campaign, data2, key)
     }
+
 }

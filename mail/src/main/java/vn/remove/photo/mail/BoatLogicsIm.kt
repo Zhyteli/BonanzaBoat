@@ -8,6 +8,7 @@ import com.google.firebase.database.*
 import vn.remove.photo.RoomOneData
 import vn.remove.photo.logics.BoatLogics
 import vn.remove.photo.logics.BoatModelFirebase
+import vn.remove.photo.logics.BoatModelFirebase.Companion.TWOLINK
 import vn.remove.photo.logics.BoatModelRoom
 
 class BoatLogicsIm(
@@ -31,7 +32,7 @@ class BoatLogicsIm(
     override suspend fun setterBoatModelRoomData(link: BoatModelRoom) {
         if (getBoatModelRoomData().value == null) {
             roomDao.saveBoat(link)
-        } else if (getBoatModelRoomData().value!!.data.contains(DEFAULT_STRING)) {
+        } else if (getBoatModelRoomData().value!!.data.contains(TWOLINK)) {
             roomDao.saveBoat(link)
         }
     }
@@ -50,7 +51,7 @@ class BoatLogicsIm(
                 }
             }
             override fun onCancelled(error: DatabaseError) {
-                Log.d("DatabaseError", error.message)
+                Log.d("NON ERROR", error.message)
             }
         })
         return boatModelFirebaseMutableLiveData
@@ -60,8 +61,5 @@ class BoatLogicsIm(
         firebase = FirebaseDatabase.getInstance().getReference(gog)
         data.id = gog
         firebase.child(gog).setValue(data)
-    }
-    companion object {
-        const val DEFAULT_STRING = "bonanzaboat.store/boat.php"
     }
 }
