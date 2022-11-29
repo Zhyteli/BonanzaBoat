@@ -29,8 +29,6 @@ class BoatViewModel : ViewModel() {
 
     private val mapper = BoatMapper()
     private val deep = "deeplink"
-    lateinit var deepEdit: SharedPreferences.Editor
-    lateinit var deepSH: SharedPreferences
 
     fun firedataLive(app: Application, gog: String): LiveData<String> {
         val repos = BoatLogicsIm(app, gog)
@@ -188,7 +186,7 @@ class BoatViewModel : ViewModel() {
     }
 
     private fun dataFace(appLink: AppLinkData?): String {
-        val data1 = "myapp://test1/test2/test3/test4/test5"
+        val data1 = appLink?.appLinkData.toString()
         return data1
     }
 

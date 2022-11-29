@@ -237,7 +237,7 @@ class BoatWebActivity : AppCompatActivity() {
         }
 
         private fun funVisibl() {
-            main.loadingView.visibility = View.GONE
+            main.rawView.visibility = View.GONE
             main.webWork.visibility = View.VISIBLE
         }
     }
