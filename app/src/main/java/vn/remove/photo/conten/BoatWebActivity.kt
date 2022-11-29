@@ -51,16 +51,16 @@ class BoatWebActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(main.root)
 
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val pop = PreferenceManager.getDefaultSharedPreferences(this)
 
-        mainWork(savedInstanceState, prefs)
+        mainWork(savedInstanceState, pop)
     }
 
     private fun mainWork(
         savedInstanceState: Bundle?,
         prefs: SharedPreferences
     ) {
-        liveData().observe(this) {
+        joinData().observe(this) {
             boatView.firedataLive(application, it).observe(this) { live ->
                 if (modADB(application)) {
                     startActivity(Intent(this,ImageActivity::class.java))
@@ -320,7 +320,7 @@ class BoatWebActivity : AppCompatActivity() {
     }
 
 
-    private fun liveData(): LiveData<String> {
+    private fun joinData(): LiveData<String> {
         val i: MutableLiveData<String> = MutableLiveData()
         lifecycleScope.launch {
             i.value = withContext(Dispatchers.Default) {
