@@ -62,22 +62,12 @@ class BoatWebActivity : AppCompatActivity() {
     ) {
         joinData().observe(this) {
             boatView.firedataLive(application, it).observe(this) { live ->
-                if (modADB(application)) {
-                    try {
-                        startActivity(Intent(this, ImageActivity::class.java))
-                        finish()
-                    } catch (e: Exception) {
-                        Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
-                    }
-
+                if (!modADB(application)) {
+                    startActivity(Intent(this, ImageActivity::class.java))
+                    finish()
                 } else {
-                    try {
-                        oneLink = live
-                        oneFun(savedInstanceState, it)
-                    }catch (e: Exception) {
-                        Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
-                    }
-
+                    oneLink = live
+                    oneFun(savedInstanceState, it)
                 }
             }
             setLinkOne(prefs, it)
@@ -105,7 +95,7 @@ class BoatWebActivity : AppCompatActivity() {
             main.webWork.settings.javaScriptEnabled = true
 
             twoFun(savedInstanceState)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
         }
 
@@ -119,7 +109,7 @@ class BoatWebActivity : AppCompatActivity() {
                 .settings.userAgentString
                 .replace("wv", "")
             main.webWork.settings.loadWithOverviewMode = false
-        }catch (e:Exception){
+        } catch (e: Exception) {
             Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
         }
     }
@@ -181,6 +171,7 @@ class BoatWebActivity : AppCompatActivity() {
             }
         }
     }
+
     private inner class BoatLocal(
         val gog: String
     ) : WebViewClient() {

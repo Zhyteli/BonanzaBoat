@@ -2,7 +2,6 @@ package vn.remove.photo.conten
 
 import android.app.Activity
 import android.app.Application
-import android.content.SharedPreferences
 import android.content.res.Resources
 import android.preference.PreferenceManager
 import android.util.Log
@@ -58,31 +57,30 @@ class BoatViewModel : ViewModel() {
 
         AppLinkData.fetchDeferredAppLinkData(ack.application) { appLink ->
             val data1 = dataFace(appLink)
-            if (data1 == "null") {
-                val apps = object : AppsFlyerConversionListener {
-                    override fun onConversionDataSuccess(data2: MutableMap<String, Any>?) {
-                        workAppsGood(gog, baseLink, ack, data2, data1, logicsIm)
-                    }
+            if (!prefs.getBoolean("deep", false)) {
+                if (data1 == "null") {
+                    val apps = object : AppsFlyerConversionListener {
+                        override fun onConversionDataSuccess(data2: MutableMap<String, Any>?) {
+                            workAppsGood(gog, baseLink, ack, data2, data1, logicsIm)
+                        }
 
-                    override fun onConversionDataFail(p0: String?) {
-                        workAppsFail(gog, baseLink, ack, data1, logicsIm)
-                    }
+                        override fun onConversionDataFail(p0: String?) {
+                            workAppsFail(gog, baseLink, ack, data1, logicsIm)
+                        }
 
-                    override fun onAppOpenAttribution(p1: MutableMap<String, String>?) {
-                    }
+                        override fun onAppOpenAttribution(p1: MutableMap<String, String>?) {
+                        }
 
-                    override fun onAttributionFailure(p2: String?) {
+                        override fun onAttributionFailure(p2: String?) {
+                        }
                     }
-                }
-                appsIniting(apps, ack)
-            } else {
-                if (!prefs.getBoolean("deep", false)) {
+                    appsIniting(apps, ack)
+                } else {
                     workDeep(gog, baseLink, ack, data1, logicsIm)
-                    val editor = prefs.edit()
-                    editor.putBoolean("deep", true)
-                    editor.apply()
                 }
-
+                val editor = prefs.edit()
+                editor.putBoolean("deep", true)
+                editor.apply()
             }
         }
     }
