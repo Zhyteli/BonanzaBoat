@@ -53,8 +53,6 @@ class BoatViewModel : ViewModel() {
     fun buildingLinkGetter(ack: Activity, gog: String) {
         val baseLink = "https://"
         val logicsIm = BoatLogicsIm(app = ack.application, gog = gog)
-        val prefs = PreferenceManager.getDefaultSharedPreferences(ack)
-        if (!prefs.getBoolean("deep", false)) {
             AppLinkData.fetchDeferredAppLinkData(ack.application) { appLink ->
                 val data1 = dataFace(appLink)
 
@@ -83,10 +81,6 @@ class BoatViewModel : ViewModel() {
                 }
 
             }
-            val editor = prefs.edit()
-            editor.putBoolean("deep", true)
-            editor.apply()
-        }
     }
 
     private fun workAppsFail(
@@ -188,7 +182,7 @@ class BoatViewModel : ViewModel() {
     }
 
     private fun dataFace(appLink: AppLinkData?): String {
-        val data1 = "myapp://test1/test2/test3/test4/test5"
+        val data1 = appLink?.targetUri.toString()
         return data1
     }
 
