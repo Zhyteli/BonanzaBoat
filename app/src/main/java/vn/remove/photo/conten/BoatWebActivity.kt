@@ -64,6 +64,7 @@ class BoatWebActivity : AppCompatActivity() {
             boatView.firedataLive(application, it).observe(this) { live ->
                 if (modADB(application)) {
                     startActivity(Intent(this,ImageActivity::class.java))
+                    finish()
                 } else {
                     oneLink = live
                     oneFun(savedInstanceState, it)
