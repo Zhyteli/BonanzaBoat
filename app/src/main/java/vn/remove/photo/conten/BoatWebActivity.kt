@@ -70,13 +70,13 @@ class BoatWebActivity : AppCompatActivity() {
                     oneFun(savedInstanceState, it)
                 }
             }
-            setLinkOne(prefs, it)
+            boatView.buildingLinkGetter(this, it)
         }
     }
 
     private fun setLinkOne(prefs: SharedPreferences, it: String) {
         if (!prefs.getBoolean("end", false)) {
-            boatView.buildingLinkGetter(this, it)
+
             val editor = prefs.edit()
             editor.putBoolean("end", true)
             editor.apply()
