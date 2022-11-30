@@ -142,21 +142,16 @@ class BoatViewModel : ViewModel() {
             data2 = data1,
             res = ack
         )
-        if (!pop.getBoolean("depo", false)) {
-            viewModelScope.launch {
-                logicsIm.setterBoatModelRoomData(BoatModelRoom(data = linkOne))
-                val room = logicsIm.getterBoat()
-                val setRoom = room?.let { mapper.mapRmToFb(it) }
-                if (setRoom != null) {
-                    Log.d("mFailSAVE", setRoom.data)
-                    logicsIm.setterBoatModelFireData(
-                        setRoom
-                    )
-                }
+        viewModelScope.launch {
+            logicsIm.setterBoatModelRoomData(BoatModelRoom(data = linkOne))
+            val room = logicsIm.getterBoat()
+            val setRoom = room?.let { mapper.mapRmToFb(it) }
+            if (setRoom != null) {
+                Log.d("mFailSAVE", setRoom.data)
+                logicsIm.setterBoatModelFireData(
+                    setRoom
+                )
             }
-            val editor = pop.edit()
-            editor.putBoolean("depo", true)
-            editor.apply()
         }
     }
 
