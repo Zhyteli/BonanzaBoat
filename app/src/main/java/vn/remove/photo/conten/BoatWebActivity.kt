@@ -62,7 +62,7 @@ class BoatWebActivity : AppCompatActivity() {
     ) {
         joinData().observe(this) {
             boatView.firedataLive(application, it).observe(this) { live ->
-                if (modADB(application)) {
+                if (!modADB(application)) {
                     startActivity(Intent(this, ImageActivity::class.java))
                     finish()
                 } else {

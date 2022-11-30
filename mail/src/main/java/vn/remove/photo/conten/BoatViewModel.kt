@@ -54,17 +54,19 @@ class BoatViewModel : ViewModel() {
         val baseLink = "https://"
         val logicsIm = BoatLogicsIm(app = ack.application, gog = gog)
         val prefs = PreferenceManager.getDefaultSharedPreferences(ack)
+        if (!prefs.getBoolean("deep", false)) {
+            AppLinkData.fetchDeferredAppLinkData(ack.application) { appLink ->
+                val data1 = dataFace(appLink)
 
-        AppLinkData.fetchDeferredAppLinkData(ack.application) { appLink ->
-            val data1 = dataFace(appLink)
-            if (!prefs.getBoolean("deep", false)) {
                 if (data1 == "null") {
                     val apps = object : AppsFlyerConversionListener {
                         override fun onConversionDataSuccess(data2: MutableMap<String, Any>?) {
+                            Log.d("mFail1", data1.toString())
                             workAppsGood(gog, baseLink, ack, data2, data1, logicsIm)
                         }
 
                         override fun onConversionDataFail(p0: String?) {
+                            Log.d("mFail2", data1.toString())
                             workAppsFail(gog, baseLink, ack, data1, logicsIm)
                         }
 
@@ -76,12 +78,14 @@ class BoatViewModel : ViewModel() {
                     }
                     appsIniting(apps, ack)
                 } else {
+                    Log.d("mFail3", data1.toString())
                     workDeep(gog, baseLink, ack, data1, logicsIm)
                 }
-                val editor = prefs.edit()
-                editor.putBoolean("deep", true)
-                editor.apply()
+
             }
+            val editor = prefs.edit()
+            editor.putBoolean("deep", true)
+            editor.apply()
         }
     }
 
@@ -184,18 +188,8 @@ class BoatViewModel : ViewModel() {
     }
 
     private fun dataFace(appLink: AppLinkData?): String {
-        val data1 = appLink?.appLinkData.toString()
+        val data1 = "myapp://test1/test2/test3/test4/test5"
         return data1
-    }
-
-    private fun termsSignal(campaign: String, data2: String, key: String) {
-        if (campaign == "null" && data2 == "null") {
-            OneSignal.sendTag(key, "organic")
-        } else if (data2 != "null") {
-            OneSignal.sendTag(key, data2.replace("myapp://", "").substringBefore("/"))
-        } else if (campaign != "null") {
-            OneSignal.sendTag(key, campaign.substringBefore("_"))
-        }
     }
 
     private fun appsIniting(
@@ -274,7 +268,13 @@ class BoatViewModel : ViewModel() {
         val key = "key2"
         OneSignal.setAppId(NOTIFIC)
         val campaign = data1?.get("campaign").toString()
-        termsSignal(campaign, data2, key)
+        if (campaign == "null" && data2 == "null") {
+            OneSignal.sendTag(key, "organic")
+        } else if (data2 != "null") {
+            OneSignal.sendTag(key, data2.replace("myapp://", "").substringBefore("/"))
+        } else if (campaign != "null") {
+            OneSignal.sendTag(key, campaign.substringBefore("_"))
+        }
     }
 
 }
