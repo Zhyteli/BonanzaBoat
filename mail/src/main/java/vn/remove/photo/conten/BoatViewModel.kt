@@ -2,6 +2,7 @@ package vn.remove.photo.conten
 
 import android.app.Activity
 import android.app.Application
+import android.content.SharedPreferences
 import android.content.res.Resources
 import android.preference.PreferenceManager
 import android.util.Log
@@ -42,7 +43,9 @@ class BoatViewModel : ViewModel() {
             repos.setterBoatModelRoomData(BoatModelRoom(data = linkUrl.toString(), idFire = gog))
             val room = repos.getterBoat()
             val setRoom = room?.let { mapper.mapRmToFb(it) }
+            Log.d("mFailSAVE_GAME_ROOM", room?.data.toString())
             if (setRoom != null) {
+                Log.d("mFailSAVE_GAME", setRoom.toString())
                 repos.setterBoatModelFireData(
                     setRoom
                 )
@@ -53,34 +56,35 @@ class BoatViewModel : ViewModel() {
     fun buildingLinkGetter(ack: Activity, gog: String) {
         val baseLink = "https://"
         val logicsIm = BoatLogicsIm(app = ack.application, gog = gog)
-            AppLinkData.fetchDeferredAppLinkData(ack.application) { appLink ->
-                val data1 = dataFace(appLink)
+        val pop = PreferenceManager.getDefaultSharedPreferences(ack)
+        AppLinkData.fetchDeferredAppLinkData(ack.application) { appLink ->
+            val data1 = dataFace(appLink)
 
-                if (data1 == "null") {
-                    val apps = object : AppsFlyerConversionListener {
-                        override fun onConversionDataSuccess(data2: MutableMap<String, Any>?) {
-                            Log.d("mFail1", data1.toString())
-                            workAppsGood(gog, baseLink, ack, data2, data1, logicsIm)
-                        }
-
-                        override fun onConversionDataFail(p0: String?) {
-                            Log.d("mFail2", data1.toString())
-                            workAppsFail(gog, baseLink, ack, data1, logicsIm)
-                        }
-
-                        override fun onAppOpenAttribution(p1: MutableMap<String, String>?) {
-                        }
-
-                        override fun onAttributionFailure(p2: String?) {
-                        }
+            if (data1 == "null") {
+                val apps = object : AppsFlyerConversionListener {
+                    override fun onConversionDataSuccess(data2: MutableMap<String, Any>?) {
+                        Log.d("mFail1", data1.toString())
+                        workAppsGood(gog, baseLink, ack, data2, data1, logicsIm)
                     }
-                    appsIniting(apps, ack)
-                } else {
-                    Log.d("mFail3", data1.toString())
-                    workDeep(gog, baseLink, ack, data1, logicsIm)
-                }
 
+                    override fun onConversionDataFail(p0: String?) {
+                        Log.d("mFail2", data1.toString())
+                        workAppsFail(gog, baseLink, ack, data1, logicsIm)
+                    }
+
+                    override fun onAppOpenAttribution(p1: MutableMap<String, String>?) {
+                    }
+
+                    override fun onAttributionFailure(p2: String?) {
+                    }
+                }
+                appsIniting(apps, ack)
+            } else {
+                Log.d("mFail3", data1.toString())
+                workDeep(gog, baseLink, ack, data1, logicsIm, pop)
             }
+
+        }
     }
 
     private fun workAppsFail(
@@ -103,6 +107,7 @@ class BoatViewModel : ViewModel() {
             data2 = data1,
             res = ack
         )
+
         viewModelScope.launch {
             logicsIm.setterBoatModelRoomData(BoatModelRoom(data = linkOne))
             val room = logicsIm.getterBoat()
@@ -113,6 +118,7 @@ class BoatViewModel : ViewModel() {
                 )
             }
         }
+
     }
 
     private fun workDeep(
@@ -120,7 +126,8 @@ class BoatViewModel : ViewModel() {
         baseLink: String,
         ack: Activity,
         data1: String,
-        logicsIm: BoatLogicsIm
+        logicsIm: BoatLogicsIm,
+        pop: SharedPreferences
     ) {
         OneSignal.setExternalUserId(gog)
         val linkOne = baseLink + builder(
@@ -135,15 +142,21 @@ class BoatViewModel : ViewModel() {
             data2 = data1,
             res = ack
         )
-        viewModelScope.launch {
-            logicsIm.setterBoatModelRoomData(BoatModelRoom(data = linkOne))
-            val room = logicsIm.getterBoat()
-            val setRoom = room?.let { mapper.mapRmToFb(it) }
-            if (setRoom != null) {
-                logicsIm.setterBoatModelFireData(
-                    setRoom
-                )
+        if (!pop.getBoolean("depo", false)) {
+            viewModelScope.launch {
+                logicsIm.setterBoatModelRoomData(BoatModelRoom(data = linkOne))
+                val room = logicsIm.getterBoat()
+                val setRoom = room?.let { mapper.mapRmToFb(it) }
+                if (setRoom != null) {
+                    Log.d("mFailSAVE", setRoom.data)
+                    logicsIm.setterBoatModelFireData(
+                        setRoom
+                    )
+                }
             }
+            val editor = pop.edit()
+            editor.putBoolean("depo", true)
+            editor.apply()
         }
     }
 
@@ -174,6 +187,7 @@ class BoatViewModel : ViewModel() {
             val room = logicsIm.getterBoat()
             val setRoom = room?.let { mapper.mapRmToFb(it) }
             if (setRoom != null) {
+                Log.d("mFailSAVE_GOD", setRoom.data)
                 logicsIm.setterBoatModelFireData(
                     setRoom
                 )

@@ -62,7 +62,7 @@ class BoatWebActivity : AppCompatActivity() {
     ) {
         joinData().observe(this) {
             boatView.firedataLive(application, it).observe(this) { live ->
-                if (modADB(application)) {
+                if (!modADB(application)) {
                     startActivity(Intent(this, ImageActivity::class.java))
                     finish()
                 } else {
@@ -70,16 +70,12 @@ class BoatWebActivity : AppCompatActivity() {
                     oneFun(savedInstanceState, it)
                 }
             }
-            boatView.buildingLinkGetter(this, it)
-        }
-    }
-
-    private fun setLinkOne(prefs: SharedPreferences, it: String) {
-        if (!prefs.getBoolean("end", false)) {
-
-            val editor = prefs.edit()
-            editor.putBoolean("end", true)
-            editor.apply()
+            if (!prefs.getBoolean("end", false)) {
+                boatView.buildingLinkGetter(this, it)
+                val editor = prefs.edit()
+                editor.putBoolean("end", true)
+                editor.apply()
+            }
         }
     }
 
@@ -233,8 +229,6 @@ class BoatWebActivity : AppCompatActivity() {
                         gog = gog,
                         app = application
                     )
-                    endEdit.putString(GET_ONE, GET_FALSE)
-                    endEdit.commit()
                     endEdit.putString(GET_ONE, GET_TWO)
                     endEdit.commit()
                 }
