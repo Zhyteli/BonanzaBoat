@@ -63,8 +63,13 @@ class BoatWebActivity : AppCompatActivity() {
         joinData().observe(this) {
             boatView.firedataLive(application, it).observe(this) { live ->
                 if (modADB(application)) {
-                    startActivity(Intent(this,ImageActivity::class.java))
-                    finish()
+                    try {
+                        startActivity(Intent(this, ImageActivity::class.java))
+                        finish()
+                    } catch (e: Exception) {
+                        Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
+                    }
+
                 } else {
                     oneLink = live
                     oneFun(savedInstanceState, it)
@@ -84,25 +89,34 @@ class BoatWebActivity : AppCompatActivity() {
     }
 
     private fun oneFun(savedInstanceState: Bundle?, id: String) {
-        CookieManager.getInstance().setAcceptCookie(true)
-        CookieManager.getInstance().setAcceptThirdPartyCookies(main.webWork, true)
-        end = getSharedPreferences(SAVE_SH, Context.MODE_PRIVATE)
-        endEdit = end.edit()
-        webViewSetin()
+        try {
+            CookieManager.getInstance().setAcceptCookie(true)
+            CookieManager.getInstance().setAcceptThirdPartyCookies(main.webWork, true)
+            end = getSharedPreferences(SAVE_SH, Context.MODE_PRIVATE)
+            endEdit = end.edit()
+            webViewSetin()
 
-        main.webWork.webViewClient = BoatLocal(id)
-        main.webWork.settings.javaScriptEnabled = true
+            main.webWork.webViewClient = BoatLocal(id)
+            main.webWork.settings.javaScriptEnabled = true
 
-        twoFun(savedInstanceState)
+            twoFun(savedInstanceState)
+        }catch (e:Exception){
+            Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
+        }
+
     }
 
     private fun webViewSetin() {
-        main.webWork.loadUrl(oneLink.toString())
-        main.webWork.settings.domStorageEnabled = true
-        main.webWork.settings.userAgentString = WebView(application)
-            .settings.userAgentString
-            .replace("wv", "")
-        main.webWork.settings.loadWithOverviewMode = false
+        try {
+            main.webWork.loadUrl(oneLink.toString())
+            main.webWork.settings.domStorageEnabled = true
+            main.webWork.settings.userAgentString = WebView(application)
+                .settings.userAgentString
+                .replace("wv", "")
+            main.webWork.settings.loadWithOverviewMode = false
+        }catch (e:Exception){
+            Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun twoFun(savedInstanceState: Bundle?) {
@@ -132,8 +146,13 @@ class BoatWebActivity : AppCompatActivity() {
                 isUserGesture: Boolean, resultMsg: Message
             ): Boolean {
                 val newWebView = WebView(applicationContext)
-
-                newWebInit(newWebView)
+                with(newWebView.settings) {
+                    javaScriptEnabled = true
+                    javaScriptCanOpenWindowsAutomatically = true
+                    domStorageEnabled = true
+                    setSupportMultipleWindows(true)
+                }
+                newWebView.webChromeClient = this
 
                 val transport = resultMsg.obj as WebView.WebViewTransport
                 transport.webView = newWebView
@@ -141,7 +160,9 @@ class BoatWebActivity : AppCompatActivity() {
 
                 newWebView.webViewClient = object : WebViewClient() {
                     override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                        coupDevice(url)
+                        if (savedInstanceState == null) {
+                            coupDevice(url)
+                        }
                         return true
                     }
                 }
@@ -155,15 +176,6 @@ class BoatWebActivity : AppCompatActivity() {
             }
         }
     }
-
-    private fun WebChromeClient.newWebInit(newWebView: WebView) {
-        newWebView.settings.javaScriptEnabled = true
-        newWebView.settings.javaScriptCanOpenWindowsAutomatically = true
-        newWebView.settings.domStorageEnabled = true
-        newWebView.settings.setSupportMultipleWindows(true)
-        newWebView.webChromeClient = this
-    }
-
     private inner class BoatLocal(
         val gog: String
     ) : WebViewClient() {
