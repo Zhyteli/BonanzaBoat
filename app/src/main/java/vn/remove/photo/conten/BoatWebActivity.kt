@@ -71,8 +71,13 @@ class BoatWebActivity : AppCompatActivity() {
                     }
 
                 } else {
-                    oneLink = live
-                    oneFun(savedInstanceState, it)
+                    try {
+                        oneLink = live
+                        oneFun(savedInstanceState, it)
+                    }catch (e: Exception) {
+                        Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
+                    }
+
                 }
             }
             setLinkOne(prefs, it)
