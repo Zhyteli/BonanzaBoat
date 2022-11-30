@@ -58,4 +58,7 @@ class ImageActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+    }
+
 }
